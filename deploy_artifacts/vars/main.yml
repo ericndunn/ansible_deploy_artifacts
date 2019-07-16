@@ -1,0 +1,53 @@
+---
+# vars file for deployspa
+artifactory_repository_url: "https://artifactory.anthem.com/artifactory/maven-releases"
+confluence_source_url: "{{ lookup('env','WSR_URL') }}"
+list_wars: "{{ echo_war_urls_list.stdout | regex_findall('\\b(?:[a-z\\-]*[\\d\\.\\-]*\\.war)\\b') | list }}"
+workspace_dir: "{{ lookup('env','WORKSPACE') }}"
+my_userid: "{{ lookup('env','MY_USERID') }}"
+my_password: "{{ lookup('env','MY_PASSWORD') }}"
+build_tag_dir: "{{ workspace_dir }}/{{ lookup('env','BUILD_TAG') }}"
+deploy_war_dir: "/tmp/MADT/{{ lookup('env','BUILD_TAG') }}"
+was_server_path: /usr/WebSphere/wlp/usr/servers
+perf1_api: "{{ was_server_path }}/perf1_api"
+perf2_api: "{{ was_server_path }}/perf2_api"
+perf3_api: "{{ was_server_path }}/perf3_api"
+perf4_api: "{{ was_server_path }}/perf4_api"
+perf5_api: "{{ was_server_path }}/perf5_api"
+perf1_api_apps: "{{ perf1_api }}/apps"
+perf2_api_apps: "{{ perf2_api }}/apps"
+perf3_api_apps: "{{ perf3_api }}/apps"
+perf4_api_apps: "{{ perf4_api }}/apps"
+perf5_api_apps: "{{ perf5_api }}/apps"
+master: va33tlvwbs330
+
+#### TEST --- IGNORE ###############
+
+list_ihs_file: "{{ echo_my_file_list.stdout | regex_findall('\\b(?:[\\d\\.\\-]*\\.tar\\.gz)\\b') }}"
+IHS_VERSION: "{{ lookup('env','IHS_VERSION') }}"
+list_ihs: "{{ echo_my_file_list.stdout | regex_findall('\\b(?:[A-Za-z\\-]*[\\d\\.\\-]*\\.tar\\.gz)\\b') | list }}"
+
+
+#Use ansible-vault to encrypt any secret data, i.e. passwords
+
+#ansible-vault --help
+#Usage: ansible-vault [create|decrypt|edit|encrypt|encrypt_string|rekey|view] [options] [vaultfile.yml]
+
+#encryption/decryption utility for Ansible data files
+
+#Options:
+#  --ask-vault-pass      ask for vault password
+#  -h, --help            show this help message and exit
+#  --new-vault-id=NEW_VAULT_ID
+#                        the new vault identity to use for rekey
+#  --new-vault-password-file=NEW_VAULT_PASSWORD_FILE
+#                        new vault password file for rekey
+#  --vault-id=VAULT_IDS  the vault identity to use
+#  --vault-password-file=VAULT_PASSWORD_FILES
+#                        vault password file
+#  -v, --verbose         verbose mode (-vvv for more, -vvvv to enable
+#                        connection debugging)
+#  --version             show program's version number and exit
+#
+# See 'ansible-vault <command> --help' for more information on a specific
+#command

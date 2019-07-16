@@ -1,0 +1,11 @@
+---
+- hosts: "all"
+  gather_facts: true
+  roles: [deploy_artifacts]
+  vars: 
+  vars_files: [deploy_artifacts/vars/main.yml] 
+   
+
+
+
+  
