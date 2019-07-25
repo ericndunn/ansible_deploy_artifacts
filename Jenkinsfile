@@ -1,7 +1,7 @@
 pipeline {
     agent { label 'MASTER' }
         parameters {
-            string(defaultValue: "test_inventory", description: 'Ansible Host file', name: 'INV_FILE')
+            string(defaultValue: "inventory", description: 'Ansible Host file', name: 'INV_FILE')
             string(defaultValue: "FS-AA-PERF-WAS", description: 'Ansible Host Group', name: 'INV_GRP')   
             // choice(choices: ['DEV', 
             //             'DEV1', 

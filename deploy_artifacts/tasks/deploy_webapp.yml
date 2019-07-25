@@ -125,7 +125,7 @@
 
 - name: "Rename war removing version"
   shell: |
-          for f in "{{ build_tag_dir }}"
+          for f in ${WORKSPACE}/${BUILD_TAG}
             do
               cd $f;
               rename 's/(-?\d\.)+/\./' *.war;
