@@ -125,7 +125,7 @@
 
 - name: "Rename war removing version"
   shell: "{{ item }}"
-  with_items: "rename 's/(-?\d\.)+/\./' {{ build_tag_dir }}/*.war;"          
+  with_items: rename 's/(-?\d\.)+/\./' {{ build_tag_dir }}/*.war;         
   delegate_to: localhost
   register: rename_war_wo_version
 
