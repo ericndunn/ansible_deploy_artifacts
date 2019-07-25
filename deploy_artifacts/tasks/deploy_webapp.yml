@@ -125,12 +125,12 @@
 
 - name: "Rename war removing version"
   shell: |
-          "for f in {{ build_tag_dir }}
+          for f in {{ build_tag_dir }}
             do
               cd $f;
               rename 's/(-?\d\.)+/\./' *.war;
               ls .;
-            done"
+            done
   delegate_to: localhost
   register: rename_war_wo_version
 
