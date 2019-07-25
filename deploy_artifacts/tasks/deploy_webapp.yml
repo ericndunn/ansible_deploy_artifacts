@@ -124,15 +124,22 @@
   run_once: true                       
 
 - name: "Rename war removing version"
-  shell: |
-          for f in {{ build_tag_dir }}
-            do
-              cd $f;
-              rename 's/(-?\d\.)+/\./' *.war;
-              ls .;
-            done
+  shell: "{{ item }}"
+  with_items: "rename 's/(-?\d\.)+/\./' {{ build_tag_dir }}/*.war;"          
   delegate_to: localhost
   register: rename_war_wo_version
+
+# - name: "Rename war removing version"
+#   shell: |
+#           for f in {{ build_tag_dir }}
+#             do
+#               cd $f;
+#               rename 's/(-?\d\.)+/\./' *.war;
+#               ls .;
+#             done
+#   delegate_to: localhost
+#   register: rename_war_wo_version
+
 
 - name: "DEBUG: Rename war removing version"  
   debug:
