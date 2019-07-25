@@ -1,5 +1,26 @@
 ---
 # tasks file for deployspa
+
+- name: "Get localhost facts"
+  setup:
+  run_once: true  
+  delegate_to: localhost
+  delegate_facts: True
+  register: local_facts
+
+- name: "Get inventory facts"
+  setup:
+  register: inventory_facts  
+
+- name: "DEBUG: Local and Inventory facts"  
+  debug:
+    msg: 
+      - "LOCAL START" 
+      - "{{ local_facts }}"
+      - "INVENTORY START"
+      - "{{ inventory_facts }}"
+  run_once: true  
+  
 - include_tasks: deploy_webapp.yml
 #- include_tasks: deploy_maven_artifacts.yml
 

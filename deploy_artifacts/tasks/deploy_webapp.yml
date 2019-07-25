@@ -1,26 +1,6 @@
 ---
 # tasks file for deployspa
-# stultus probationem
-
-- name: "Get localhost facts"
-  setup:
-  run_once: true  
-  delegate_to: localhost
-  delegate_facts: True
-  register: local_facts
-
-- name: "Get inventory facts"
-  setup:
-  register: inventory_facts  
-
-- name: "DEBUG: Local and Inventory facts"  
-  debug:
-    msg: 
-      - "LOCAL START" 
-      - "{{ local_facts }}"
-      - "INVENTORY START"
-      - "{{ inventory_facts }}"
-  run_once: true            
+# stultus probationem          
 
 - name: "Get WSR Page"
   get_url: 
@@ -143,14 +123,41 @@
       - "{{ create_version_files.results | map(attribute='dest') | list }}"
   run_once: true                       
 
-- name: "Check directory /tmp/MADT exists."
+- name: "Rename war removing version"
+  shell: |
+          for f in "{{ build_tag_dir }}"
+            do
+              cd $f;
+              rename 's/(-?\d\.)+/\./' *.war;
+              ls .;
+            done
+  delegate_to: localhost
+  register: rename_war_wo_version
+
+- name: "DEBUG: Rename war removing version"  
+  debug:
+    msg: 
+      - "{{ rename_war_wo_version }}"  
+
+- name: "Deletes directory {{ deploy_war_dir }}"
+  file:
+    path: "{{ deploy_war_dir }}"
+    state: absent
+  register: delete_madt_dir
+
+- name: "DEBUG: Deletes directory {{ deploy_war_dir }}"  
+  debug:
+    msg: 
+      - "{{ delete_madt_dir }}" 
+      
+- name: "Check directory /tmp/MADT2 exists."
   stat:
-    path: /tmp/MADT
+    path: /tmp/MADT2
   register: madt_dir
 
-- name: "DEBUG: Check directory /tmp/MADT exists"
+- name: "DEBUG: Check directory /tmp/MADT2 exists"
   debug:
-    msg: "The directory /tmp/MADT exists"
+    msg: "The directory /tmp/MADT2 exists"
   when: madt_dir.stat.isdir is defined and madt_dir.stat.isdir
   run_once: true    
 
@@ -176,18 +183,6 @@
   - "{{ build_tag_dir }}/*.war"
   - "{{ build_tag_dir }}/*.txt"
   register: put_war_release
-
-# - name: "DEBUG: Copy War and War-Versioning Files from {{ workspace_dir }}"  
-#   debug:
-#     msg: 
-#       - "{{ put_war_release.results | map(attribute='item') | list }}"
-#   run_once: true    
-
-# - name: "DEBUG: Copy War and War-Versioning Files to {{ deploy_war_dir }}"  
-#   debug:
-#     msg: 
-#       - "{{ put_war_release.results | map(attribute='dest') | list }}"
-#   run_once: true 
 
 - name: dest from the first list, item returns from the second list
   debug:
@@ -219,102 +214,3 @@
       - "{{ local_files.results | map(attribute='stat.path') | list }}"
       - "{{ remote_files.results }}"                   
 
-########### TESTING ###################################
-
-# - name: "ALTERNATE Maven method to get files"
-#   maven_artifact:
-#     group_id: com.anthem.mobile.aggregation
-#     artifact_id: ma-userregistration-war
-#     version: 2.0.4
-#     extension: war
-#     repository_url: "{{ artifactory_repository_url }}"
-#     username: "{{ my_userid }}"
-#     password: "{{ my_password }}"
-#     dest: "{{ workspace_dir }}/"
-#     validate_certs: no
-#   run_once: true  
-#   delegate_to: localhost
-#   delegate_facts: True
-#   register: mvn_var
-
-# - debug:
-#     msg:  
-#       - "{{ mvn_var }}"
-#   run_once: true    
-
-########### IGNORE BELOW ############### 
-
-# - name: "Echo my file list"
-#   shell: echo "{{ lookup('env','MY_FILE_LIST') }}"
-#   register: echo_my_file_list
-#   delegate_to: localhost
-#delegate_facts: True
-
-# - name: "DEBUG: Echo my file list"  
-#   debug:
-#     msg: "{{ echo_my_file_list.stdout.split('\n') }}"      
-
-# - name: TEST STUFF
-#   debug: 
-#     msg: "{{ item.path }}"
-#   with_items: "{{ files_matched.files | regex_replace('-\\d[\\d\\.]*', '.') }}"          
-
-
-# # - name: "Find {{ workspace_dir }}/*.tar.gz if exists"
-# #   local_action: 
-# #     module: find
-# #     paths: "{{ workspace_dir }}"
-# #     patterns: "*.tar.gz"
-# #     recurse: yes
-# #   register: files_matched_tar
-# # - name: "DEBUG: Find {{ workspace_dir }}/*.tar.gz if exists"  
-# #   debug: 
-# #     msg: "{{ files_matched_tar.files | map(attribute='path') | list }}"         
-
-# # - name: "Check directory /tmp/MADT/{{ lookup('env','IHS_VERSION') }} exists."
-# #   stat:
-# #     path: "/tmp/MADT/{{ lookup('env','IHS_VERSION') }}"
-# #   register: ihs_version
-# # - debug:
-# #     msg: "The directory {{ lookup('env','IHS_VERSION') }} exists"
-# #   when: ihs_version.stat.isdir is defined and pp.stat.isdir          
- 
-# # - name: "Create directory /tmp/MADT/{{ lookup('env','IHS_VERSION') }} if not exists"
-# #   file:
-# #     path: "/tmp/MADT/{{ lookup('env','IHS_VERSION') }}"
-# #     state: directory
-# #     mode: 0755
-# #     group: mobist
-# #   when: ihs_version.stat.exists == false
-
-# # - name: "Copy War and War-Versioning Files to {{ ansible_hostname }} /tmp/MADT/"
-# #   copy:
-# #     src: "{{ item }}"
-# #     dest: /tmp/MADT/
-# #     group: mobist
-# #     mode: 0775
-# #   with_fileglob:
-# #   - "{{ workspace_dir }}/*.war"
-# #   # - "{{ workspace_dir }}/*.tar.gz"
-# #   - "{{ workspace_dir }}/*.txt"
-# #   register: put_war_release
-# # - debug:
-# #     msg: "{{ put_war_release.results }}"
-
-# # - name: "Copy IHS Files to /tmp/MADT/{{ lookup('env','IHS_VERSION') }}"
-# #   copy:
-# #     src: "{{ item }}"
-# #     dest: "/tmp/MADT/{{ lookup('env','IHS_VERSION') }}"
-# #     group: mobist
-# #     mode: 0775
-# #   with_fileglob:
-# #   #- "{{ workspace_dir }}/*.war"
-# #   - "{{ workspace_dir }}/*.tar.gz"
-# #   #- "{{ workspace_dir }}/*.txt"
-# #   register: put_ihs_release
-# # - debug:
-# #     msg: "{{ put_ihs_release.results }}"         
-
-# # https://artifactory.anthem.com/artifactory/maven-releases/com/anthem/madt/ui/SEC/8.4.154/ABC-8.4.154.tar.gz
-# # https://artifactory.anthem.com/artifactory/maven-releases/com/anthem/madt/ui/SEC/8.4.154/EBCBS-8.4.154.tar.gz
-# # https://artifactory.anthem.com/artifactory/maven-releases/com/anthem/madt/ui/SEC/8.4.154/ABCBS-8.4.154.tar.gz

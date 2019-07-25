@@ -20,7 +20,7 @@ pipeline {
             //             'UAT3'], 
             //             description: 'UI Environment', 
             //             name: 'UI_ENV')
-            string(defaultValue: "https://confluence.anthem.com/display/MAAA/WSR+-+Dead+Pool", description: 'WSR URL', name: 'WSR_URL')                          
+            string(defaultValue: "https://confluence.anthem.com/display/MST/AA+Production+War+Files", description: 'WSR URL', name: 'WSR_URL')                          
             // choice(choices: ['contents-commercial-rest-war', 
             //             'contents-commercial-rest-war', 
             //             'ma-authentication-war', 

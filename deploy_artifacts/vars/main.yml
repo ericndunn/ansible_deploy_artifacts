@@ -7,7 +7,7 @@ workspace_dir: "{{ lookup('env','WORKSPACE') }}"
 my_userid: "{{ lookup('env','MY_USERID') }}"
 my_password: "{{ lookup('env','MY_PASSWORD') }}"
 build_tag_dir: "{{ workspace_dir }}/{{ lookup('env','BUILD_TAG') }}"
-deploy_war_dir: "/tmp/MADT/{{ lookup('env','BUILD_TAG') }}"
+deploy_war_dir: "/tmp/MADT2/{{ lookup('env','BUILD_TAG') }}"
 was_server_path: /usr/WebSphere/wlp/usr/servers
 perf1_api: "{{ was_server_path }}/perf1_api"
 perf2_api: "{{ was_server_path }}/perf2_api"
