@@ -125,7 +125,7 @@
 
 - name: "Rename war removing version"
   shell: |
-          for f in $WORKSPACE/$BUILD_TAG
+          "for f in {{ build_tag_dir }}"
             do
               cd $f;
               rename 's/(-?\d\.)+/\./' *.war;
@@ -139,78 +139,78 @@
     msg: 
       - "{{ rename_war_wo_version }}"  
 
-- name: "Deletes directory {{ deploy_war_dir }}"
-  file:
-    path: "{{ deploy_war_dir }}"
-    state: absent
-  register: delete_madt_dir
+# - name: "Deletes directory {{ deploy_war_dir }}"
+#   file:
+#     path: "{{ deploy_war_dir }}"
+#     state: absent
+#   register: delete_madt_dir
 
-- name: "DEBUG: Deletes directory {{ deploy_war_dir }}"  
-  debug:
-    msg: 
-      - "{{ delete_madt_dir }}" 
+# - name: "DEBUG: Deletes directory {{ deploy_war_dir }}"  
+#   debug:
+#     msg: 
+#       - "{{ delete_madt_dir }}" 
       
-- name: "Check directory /tmp/MADT2 exists."
-  stat:
-    path: /tmp/MADT2
-  register: madt_dir
+# - name: "Check directory /tmp/MADT2 exists."
+#   stat:
+#     path: /tmp/MADT2
+#   register: madt_dir
 
-- name: "DEBUG: Check directory /tmp/MADT2 exists"
-  debug:
-    msg: "The directory /tmp/MADT2 exists"
-  when: madt_dir.stat.isdir is defined and madt_dir.stat.isdir
-  run_once: true    
+# - name: "DEBUG: Check directory /tmp/MADT2 exists"
+#   debug:
+#     msg: "The directory /tmp/MADT2 exists"
+#   when: madt_dir.stat.isdir is defined and madt_dir.stat.isdir
+#   run_once: true    
 
-- name: "Creates directory {{ deploy_war_dir }}"
-  file:
-    path: "{{ deploy_war_dir }}"
-    state: directory
-    group: users
-    mode: 0775
-  register: create_madt_dir
+# - name: "Creates directory {{ deploy_war_dir }}"
+#   file:
+#     path: "{{ deploy_war_dir }}"
+#     state: directory
+#     group: users
+#     mode: 0775
+#   register: create_madt_dir
 
-- name: "DEBUG: Creates directory {{ deploy_war_dir }}"  
-  debug:
-    msg: "{{ create_madt_dir.diff }}"
+# - name: "DEBUG: Creates directory {{ deploy_war_dir }}"  
+#   debug:
+#     msg: "{{ create_madt_dir.diff }}"
 
-- name: "Copy War and War-Versioning Files to {{ create_madt_dir.path }}"
-  copy:
-    src: "{{ item }}"
-    dest: "{{ deploy_war_dir }}"
-    group: users
-    mode: 0775
-  with_fileglob:
-  - "{{ build_tag_dir }}/*.war"
-  - "{{ build_tag_dir }}/*.txt"
-  register: put_war_release
+# - name: "Copy War and War-Versioning Files to {{ create_madt_dir.path }}"
+#   copy:
+#     src: "{{ item }}"
+#     dest: "{{ deploy_war_dir }}"
+#     group: users
+#     mode: 0775
+#   with_fileglob:
+#   - "{{ build_tag_dir }}/*.war"
+#   - "{{ build_tag_dir }}/*.txt"
+#   register: put_war_release
 
-- name: dest from the first list, item returns from the second list
-  debug:
-    msg: "{{ item.0 }} : {{ item.1 }}"
-  with_together:
-    - "{{ put_war_release.results | map(attribute='dest') | list }}"
-    - "{{ put_war_release.results | map(attribute='item') | list }}"   
+# - name: dest from the first list, item returns from the second list
+#   debug:
+#     msg: "{{ item.0 }} : {{ item.1 }}"
+#   with_together:
+#     - "{{ put_war_release.results | map(attribute='dest') | list }}"
+#     - "{{ put_war_release.results | map(attribute='item') | list }}"   
 
-- name: "Register local checksums"
-  stat:
-    path: "{{ item }}"
-    checksum_algorithm: sha1
-  delegate_to: localhost
-  with_fileglob: "{{ build_tag_dir }}/*.war"
-  register: local_files
-- name: "Check remote checksums comparing them to corresponding local"  
-  stat:
-    path: "{{ deploy_war_dir }}/{{ item.stat.path | basename }}"
-    checksum_algorithm: sha1
-  failed_when: remote_files.stat.checksum != item.stat.checksum
-  with_items: "{{ local_files.results }}"
-  register: remote_files
-  loop_control:
-    label: "{{ item.stat.path | basename }}"
+# - name: "Register local checksums"
+#   stat:
+#     path: "{{ item }}"
+#     checksum_algorithm: sha1
+#   delegate_to: localhost
+#   with_fileglob: "{{ build_tag_dir }}/*.war"
+#   register: local_files
+# - name: "Check remote checksums comparing them to corresponding local"  
+#   stat:
+#     path: "{{ deploy_war_dir }}/{{ item.stat.path | basename }}"
+#     checksum_algorithm: sha1
+#   failed_when: remote_files.stat.checksum != item.stat.checksum
+#   with_items: "{{ local_files.results }}"
+#   register: remote_files
+#   loop_control:
+#     label: "{{ item.stat.path | basename }}"
 
-- name: "DEBUG: Register local checksums AND Check remote checksums comparing them to corresponding local"  
-  debug:
-    msg: 
-      - "{{ local_files.results | map(attribute='stat.path') | list }}"
-      - "{{ remote_files.results }}"                   
+# - name: "DEBUG: Register local checksums AND Check remote checksums comparing them to corresponding local"  
+#   debug:
+#     msg: 
+#       - "{{ local_files.results | map(attribute='stat.path') | list }}"
+#       - "{{ remote_files.results }}"                   
 
