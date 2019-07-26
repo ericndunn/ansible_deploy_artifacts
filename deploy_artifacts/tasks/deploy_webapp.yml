@@ -2,20 +2,31 @@
 # tasks file for deployspa
 # stultus probationem 
 
-- name: "Remove *.txt"
+- name: "Remove {{ workspace_dir }}/war_urls.txt"
   file:
     state: "{{ item }}"
-    path: "{{ workspace_dir }}/*.txt"
+    path: "{{ workspace_dir }}/war_urls.txt"
   with_items:
     - absent
-  register: rm_txt
+  register: rm_war_urls
   run_once: true
   delegate_to: localhost
+
+- name: "Remove {{ workspace_dir }}/wsr_page.txt"
+  file:
+    state: "{{ item }}"
+    path: "{{ workspace_dir }}/wsr_page.txt"
+  with_items:
+    - absent
+  register: rm_wsr_page
+  run_once: true
+  delegate_to: localhost  
 
 - name: "DEBUG: Remove *.txt"
   debug:
     msg:
-      - "{{ rm_txt }}"          
+      - "{{ rm_war_urls }}"  
+      - "{{ rm_wsr_page }}"        
 
 - name: "Get WSR Page"
   get_url: 
