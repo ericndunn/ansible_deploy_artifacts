@@ -99,7 +99,7 @@
       - "Checksum of files from source:"
       - "{{ get_url_results.results | map(attribute='item') | list }}"
       - "{{ get_url_results.results | map(attribute='md5sum') | list }}"
-  run_once: true    
+  run_once: true
 
 - name: "List WAS Artifact from URL"
   debug:
@@ -116,7 +116,6 @@
   delegate_to: localhost
   delegate_facts: True  
   register: files_matched
-
 - name: "DEBUG: List *.war if exists on {{ workspace_dir }}"  
   debug:
     msg: "{{ files_matched.files | map(attribute='path') | list }}"
@@ -131,44 +130,30 @@
   delegate_to: localhost
   delegate_facts: True
   register: create_version_files
-
 - name: "DEBUG: Create file for versioning the WARS"  
   debug:
     msg: 
       - "{{ create_version_files.results | map(attribute='dest') | list }}"
   run_once: true                       
 
-# - name: stat foo
-#   stat: path="{{ build_tag_dir }}""
-#   register: foo_stat
-
-# - name: Move foo to bar
-#   command: mv {{ build_tag_dir }}*.war {{ build_tag_dir }}
-#   when: foo_stat.stat.exists
-
-# - name: "Rename war removing version"
-#   shell: |
-#           for f in {{ build_tag_dir }}
-#             do
-#               cd $f;
-#               rename 's/(-?\d\.)+/\./' *.war;
-#               ls .;
-#             done
-#   delegate_to: localhost
-#   register: rename_war_wo_version
-
-
-# - name: "DEBUG: Rename war removing version"  
-#   debug:
-#     msg: 
-#       - "{{ rename_war_wo_version }}"  
+- name: "Rename war removing version"
+  shell: |
+    "for f in {{ build_tag_dir }} do cd $f;"
+    rename 's/(-?\d\.)+/\./' *.war;
+    ls .;
+    done
+  delegate_to: localhost
+  register: rename_war_wo_version
+- name: "DEBUG: Rename war removing version"  
+  debug:
+    msg: 
+      - "{{ rename_war_wo_version }}"  
 
 # - name: "Deletes directory {{ deploy_war_dir }}"
 #   file:
 #     path: "{{ deploy_war_dir }}"
 #     state: absent
 #   register: delete_madt_dir
-
 # - name: "DEBUG: Deletes directory {{ deploy_war_dir }}"  
 #   debug:
 #     msg: 
