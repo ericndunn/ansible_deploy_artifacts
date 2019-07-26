@@ -161,7 +161,7 @@
   delegate_to: localhost
 
 - name: Rename the files
-  shell: "mv {{ build_tag_dir }}/{{ item }} {{ build_tag_dir }}/{{ item | regex_replace('-?((\\d+)\.war)+', '\.war') }}"
+  shell: "mv {{ build_tag_dir }}/{{ item }} {{ build_tag_dir }}/{{ item | regex_replace('-?((\d+)\.war)+', '\.war') }}"
   with_items: "{{ myresults.stdout_lines }}"
   delegate_to: localhost
 
