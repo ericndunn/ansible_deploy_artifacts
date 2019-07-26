@@ -1,6 +1,21 @@
 ---
 # tasks file for deployspa
-# stultus probationem          
+# stultus probationem 
+
+- name: "Remove *.txt"
+  file:
+    state: "{{ item }}"
+    path: "{{ workspace_dir }}/*.txt"
+  with_items:
+    - absent
+  register: rm_txt
+  run_once: true
+  delegate_to: localhost
+
+- name: "DEBUG: Remove *.txt"
+  debug:
+    msg:
+      - "{{ rm_txt }}"          
 
 - name: "Get WSR Page"
   get_url: 
