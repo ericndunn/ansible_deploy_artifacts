@@ -154,25 +154,14 @@
 #   with_indexed_items: "{{ files_to_rename.stdout_lines }}"
 #   delegate_to: localhost
 
-- name: List Wars
+- name: Get a list of files
   shell: "ls {{ build_tag_dir }}/*.war"
+  changed_when: false
   register: results
-  delegate_to: localhost
-- name: "DEBUG: List Wars"  
-  debug:
-    msg: 
-      - "{{ results.stdout_lines }}"    
 
-- name: Rename WARS
-  shell: |
-    mv {{ item }} {{ item | regex_replace('-?((\d+)\.war)+', '\.war')}}
-  with_items: "{{ results.stdout_lines }}"
-  register: shell_rename
-  delegate_to: localhost
-- name: "DEBUG: Shell to rename files"  
-  debug:
-    msg: 
-      - "{{ shell_rename }}"
+- name: Rename the files
+  shell: "mv {{ build_tag_dir }}/{{ item }} {{ build_tag_dir }}/{{ item | regex_replace('-?((\d+)\.war)+', '\.war') }}"
+  with_items: results.stdout_lines
 
 
 # - name: Remove the source files that we have renamed
