@@ -157,12 +157,12 @@
 - name: Get a list of files
   shell: "ls {{ build_tag_dir }}/*.war"
   changed_when: false
-  register: results
+  register: myresults
   delegate_to: localhost
 
 - name: Rename the files
   shell: "mv {{ build_tag_dir }}/{{ item }} {{ build_tag_dir }}/{{ item | regex_replace('-?((\\d+)\\.war)+', '\\.war') }}"
-  with_items: results.stdout_lines
+  with_items: myresults.stdout_lines
   delegate_to: localhost
 
 
