@@ -145,7 +145,7 @@
 - name: Rename the files (Here we use the copy technique)
   copy: 
     src: "{{ build_tag_dir }}/{{ item.1 }}"
-    dest: "{{ build_tag_dir }}/file-{{ item.0 + 1 }}"
+    dest: "{{ build_tag_dir }}/{{ item.0 + 1 | basename | regex_replace(\w+(?:-\w+)*)-\d+(?:\.\d+)*(?=\.war\b) }}"
     remote_src: yes
   with_indexed_items: "{{ files_to_rename.stdout_lines }}"
   delegate_to: localhost
