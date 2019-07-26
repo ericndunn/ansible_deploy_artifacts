@@ -144,7 +144,7 @@
 - name: "DEBUG: Get the list of all file names inside the directory"  
   debug:
     msg: 
-      - "{{ files_to_rename }}"  
+      - "{{ files_to_rename.stdout_lines }}"  
 
 # - name: Rename the files (Here we use the copy technique)
 #   copy: 
@@ -154,11 +154,13 @@
 #   with_indexed_items: "{{ files_to_rename.stdout_lines }}"
 #   delegate_to: localhost
 
-- shell: ls {{ build_tag_dir }}/*.war
+- name: List Wars
+  shell: ls "{{ build_tag_dir }}/*.war"
   register: results
   delegate_to: localhost
 
-- shell: mv {{ build_tag_dir }}/{{ item }} {{ build_tag_dir }}/{{ item | regex_replace('-?((\d+)\.war)+', '\.war')}}
+- name: Rename WARS
+- shell: mv "{{ build_tag_dir }}/{{ item }} {{ build_tag_dir }}/{{ item | regex_replace('-?((\d+)\.war)+', '\.war')}}"
   with_items: results.stdout_lines
   register: shell_rename
   delegate_to: localhost
