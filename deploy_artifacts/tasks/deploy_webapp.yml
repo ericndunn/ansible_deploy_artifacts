@@ -141,14 +141,32 @@
   register: files_to_rename
   changed_when: no
   delegate_to: localhost
+- name: "DEBUG: Get the list of all file names inside the directory"  
+  debug:
+    msg: 
+      - "{{ files_to_rename }}"  
 
-- name: Rename the files (Here we use the copy technique)
-  copy: 
-    src: "{{ build_tag_dir }}/{{ item.1 }}"
-    dest: "{{ build_tag_dir }}/{{ item.0 + 1 | basename | regex_replace(\\w+(?:-\\w+)*)-\\d+(?:\\.\\d+)*(?=\\.war\\b) }}"
-    remote_src: yes
-  with_indexed_items: "{{ files_to_rename.stdout_lines }}"
+# - name: Rename the files (Here we use the copy technique)
+#   copy: 
+#     src: "{{ build_tag_dir }}/{{ item.1 }}"
+#     dest: "{{ build_tag_dir }}/{{ item.0 + 1 | basename | regex_replace(\\w+(?:-\\w+)*)-\\d+(?:\\.\\d+)*(?=\\.war\\b) }}"
+#     remote_src: yes
+#   with_indexed_items: "{{ files_to_rename.stdout_lines }}"
+#   delegate_to: localhost
+
+- shell: ls {{ build_tag_dir }}/*.war
+  register: results
   delegate_to: localhost
+
+- shell: mv {{ build_tag_dir }}/{{ item }} {{ build_tag_dir }}/{{ item | regex_replace('-?((\d+)\.war)+', '\.war')}}
+  with_items: results.stdout_lines
+  register: shell_rename
+  delegate_to: localhost
+- name: "DEBUG: Shell to rename files"  
+  debug:
+    msg: 
+      - "{{ shell_rename }}"
+
 
 # - name: Remove the source files that we have renamed
 #   file:
