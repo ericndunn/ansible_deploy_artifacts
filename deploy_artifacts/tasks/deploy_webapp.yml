@@ -123,11 +123,13 @@
       - "{{ create_version_files.results | map(attribute='dest') | list }}"
   run_once: true                       
 
-- name: "Rename war removing version"
-  shell: "{{ item }}"
-  with_items: rename 's/(-?\d\.)+/\./' {{ build_tag_dir }}/*.war;         
-  delegate_to: localhost
-  register: rename_war_wo_version
+# - name: stat foo
+#   stat: path="{{ build_tag_dir }}""
+#   register: foo_stat
+
+# - name: Move foo to bar
+#   command: mv {{ build_tag_dir }}*.war {{ build_tag_dir }}
+#   when: foo_stat.stat.exists
 
 # - name: "Rename war removing version"
 #   shell: |
@@ -141,10 +143,10 @@
 #   register: rename_war_wo_version
 
 
-- name: "DEBUG: Rename war removing version"  
-  debug:
-    msg: 
-      - "{{ rename_war_wo_version }}"  
+# - name: "DEBUG: Rename war removing version"  
+#   debug:
+#     msg: 
+#       - "{{ rename_war_wo_version }}"  
 
 # - name: "Deletes directory {{ deploy_war_dir }}"
 #   file:
