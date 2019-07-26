@@ -4,29 +4,18 @@
 
 - name: "Remove {{ workspace_dir }}/war_urls.txt"
   file:
-    state: "{{ item }}"
-    path: "{{ workspace_dir }}/war_urls.txt"
+    state: absent
+    path: "{{ item }}"
   with_items:
-    - absent
+    - "{{ workspace_dir }}/war_urls.txt"
+    - "{{ workspace_dir }}/wsr_page.txt"
   register: rm_war_urls
-  run_once: true
   delegate_to: localhost
-
-- name: "Remove {{ workspace_dir }}/wsr_page.txt"
-  file:
-    state: "{{ item }}"
-    path: "{{ workspace_dir }}/wsr_page.txt"
-  with_items:
-    - absent
-  register: rm_wsr_page
-  run_once: true
-  delegate_to: localhost  
 
 - name: "DEBUG: Remove *.txt"
   debug:
     msg:
-      - "{{ rm_war_urls }}"  
-      - "{{ rm_wsr_page }}"        
+      - "{{ rm_war_urls }}"          
 
 - name: "Get WSR Page"
   get_url: 
