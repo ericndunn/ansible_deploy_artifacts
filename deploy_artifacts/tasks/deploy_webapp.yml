@@ -161,11 +161,12 @@
 - name: "DEBUG: List Wars"  
   debug:
     msg: 
-      - "{{ results.stdout | list }}"    
+      - "{{ results.stdout_lines }}"    
 
 - name: Rename WARS
-  shell: mv "{{ build_tag_dir }}/{{ item }}" "{{ build_tag_dir }}/{{ item | regex_replace('-?((\d+)\.war)+', '\.war')}}"
-  with_items: "{{ files_to_rename.stdout_lines }}"
+  shell: |
+    mv {{ item }} {{ item | regex_replace('-?((\d+)\.war)+', '\.war')}}
+  with_items: "{{ results.stdout_lines }}"
   register: shell_rename
   delegate_to: localhost
 - name: "DEBUG: Shell to rename files"  
