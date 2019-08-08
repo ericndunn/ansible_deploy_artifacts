@@ -2,39 +2,11 @@ pipeline {
     agent { label 'MASTER' }
         parameters {
             string(defaultValue: "inventory", description: 'Ansible Host file', name: 'INV_FILE')
-            string(defaultValue: "FS_AA_PERF_WAS", description: 'Ansible Host Group', name: 'INV_GRP')   
-            // choice(choices: ['DEV', 
-            //             'DEV1', 
-            //             'DEV2', 
-            //             'DEV3', 
-            //             'DEV4', 
-            //             'DEV5', 
-            //             'DEV6',
-            //             'DEV5',
-            //             'PERF',
-            //             'PROD',
-            //             'SEC',
-            //             'SIT',
-            //             'UAT',
-            //             'UAT2',
-            //             'UAT3'], 
-            //             description: 'UI Environment', 
-            //             name: 'UI_ENV')
-            string(defaultValue: "https://confluence.anthem.com/display/MST/AA+Production+War+Files", description: 'WSR URL', name: 'WSR_URL')                          
-            // choice(choices: ['contents-commercial-rest-war', 
-            //             'contents-commercial-rest-war', 
-            //             'ma-authentication-war', 
-            //             'ma-cm-war'], 
-            //             description: 'War Files', 
-            //             name: 'WAR_FILES')
-            // string(defaultValue: '8.0.308', description: 'IHS Version', name: 'IHS_VERSION')
+            string(defaultValue: "GROUP_NAME", description: 'Ansible Host Group', name: 'INV_GRP')   
+            
+            string(defaultValue: "https://confluence.anthem.com/display/MST/Example", description: 'WSR URL', name: 'WSR_URL')                          
             string(defaultValue: 'YOUR_USER_ID', description: 'Artifictory User ID', name: 'MY_USERID')
             password(defaultValue: '', description: 'Artifactory Password', name: 'MY_PASSWORD')
-//             text(name: 'MY_FILE_LIST', 
-//                 defaultValue: '''https://artifactory.anthem.com/artifactory/maven-releases/com/anthem/madt/ui/${UI_ENV}/${IHS_VERSION}/ABC-${IHS_VERSION}.tar.gz
-// https://artifactory.anthem.com/artifactory/maven-releases/com/anthem/madt/ui/${UI_ENV}/${IHS_VERSION}/EBCBS-${IHS_VERSION}.tar.gz
-// https://artifactory.anthem.com/artifactory/maven-releases/com/anthem/madt/ui/${UI_ENV}/${IHS_VERSION}/ABCBS-${IHS_VERSION}.tar.gz''', 
-//                 description: 'List all linked Artifacts - EXAMPLE - https://artifactory.anthem.com/artifactory/maven-releases/com/anthem/madt/commercial/contents-commercial-rest-war/1.0.0/contents-commercial-rest-war-1.0.0.war ')           
     }
     stages {
         // stage('Cleanup Jenkins Job Workspace'){
@@ -46,7 +18,7 @@ pipeline {
             steps {            
             wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
                     echo 'Validate Access'
-                    ansiblePlaybook credentialsId: 'AG19884_PK',
+                    ansiblePlaybook credentialsId: 'PASSKEY_TO_SERVER',
                     installation: 'ansible', 
                         inventory: '/Users/${MY_USERID}/${INV_FILE}',
                     limit: '${INV_GRP}',
